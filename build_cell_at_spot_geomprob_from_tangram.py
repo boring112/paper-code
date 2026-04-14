@@ -28,7 +28,6 @@ import scipy.sparse as sp
 
 
 def get_spot_xy(ad_sp):
-    """优先从 obsm['spatial'] 取坐标，否则尝试常见 obs 列。"""
     if "spatial" in ad_sp.obsm.keys():
         xy = np.asarray(ad_sp.obsm["spatial"])
         if xy.ndim >= 2 and xy.shape[1] >= 2:
@@ -59,20 +58,17 @@ def get_tangram_matrix(ad_map):
         raise KeyError("Tangram h5ad 里既没有 X，也没有 obsm['tangram_probs']，不知道概率矩阵在哪。")
 
     if sp.issparse(X):
-        # ✅ 正确：稀疏 -> dense ndarray
         X = X.tocsr().astype(np.float32).toarray()
     else:
         X = np.asarray(X, dtype=np.float32)
 
-    # 防御：确保二维
     if X.ndim != 2:
         X = np.asarray(X, dtype=np.float32).reshape(ad_map.n_obs, ad_map.n_vars)
 
     return X
 
 
-def row_normalize(mat):
-    """按行归一化，使每行和为 1（有 0 行则保持 0）。支持 dense 或 sparse。"""
+def row_normalize(mat)
     if sp.issparse(mat):
         mat = mat.tocsr()
         sums = np.asarray(mat.sum(axis=1)).ravel()
@@ -88,10 +84,6 @@ def row_normalize(mat):
 
 
 def softmax_by_group(ids, values, tau):
-    """
-    对每个 group（ids 相同的一组）内的 values 做 softmax(-value / tau)。
-    返回和 values 同 shape 的 numpy 数组。
-    """
     ids = np.asarray(ids)
     values = np.asarray(values, dtype=np.float32)
     out = np.zeros_like(values, dtype=np.float32)
@@ -113,10 +105,6 @@ def softmax_by_group(ids, values, tau):
 
 
 def build_rbf_features(dist, n_rbf=6):
-    """
-    根据所有 dist 的分位数自动选 n_rbf 个尺度，构造 RBF 特征：
-      rbf_d_k = exp( - (dist / sigma_k)^2 )
-    """
     dist = np.asarray(dist, dtype=np.float32)
     positive = dist[dist > 0]
     if positive.size == 0:
@@ -180,7 +168,7 @@ def main():
     n_spots = ad_sp.n_obs
     print(f"[info] cells={n_cells}, spots={n_spots}")
 
-    # -------- Tangram 概率矩阵（✅ 已修复稀疏转换）--------
+    # -------- Tangram 概率矩阵 --------
     P_raw = get_tangram_matrix(ad_map)          # dense float32 ndarray
     print("[info] P_raw shape:", P_raw.shape, "dtype:", P_raw.dtype)
 
