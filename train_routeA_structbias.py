@@ -2,11 +2,6 @@
 # -*- coding: utf-8 -*-
 
 """
-train_routeA_structbias.py
-Route-A + Structural Bias + (optional) AUX TF/Pathway Reconstruction
-
-✅ Fixes in this version
------------------------
 1) ALWAYS uses the CLI --lr_h5ad path (no hidden fallback to base/features_lr/...).
 2) Hard sanity checks: if edge lr_idx exceeds lr_h5ad.n_obs -> raise early with clear message.
 3) --at_csv: if passed without ".csv" but "<path>.csv" exists, it will auto-resolve.
