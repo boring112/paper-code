@@ -1,0 +1,16 @@
+numpy
+pandas
+scipy
+scikit-learn
+anndata
+scanpy
+h5py
+pyyaml
+tqdm
+networkx
+matplotlib
+seaborn
+torch
+torch-geometric
+decoupler
+snakemake
